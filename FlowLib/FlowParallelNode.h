@@ -20,10 +20,16 @@ private slots:
 
 //------------------------------------------------ Q_PROPERTY
 public:
-    FlowRequestRouter* requestRouter() const;
+    FlowRequestRouter* requestRouter() const
+    {
+        return m_requestRouter;
+    }
 
 
-    bool replyWhenCompleted() const;
+    bool replyWhenCompleted() const
+    {
+        return m_replyWhenCompleted;
+    }
 
 signals:
 
@@ -31,7 +37,13 @@ signals:
 
 public slots:
 
-void setReplyWhenCompleted(bool arg);
+    void setReplyWhenCompleted(bool arg)
+    {
+        if (m_replyWhenCompleted != arg) {
+            m_replyWhenCompleted = arg;
+            emit replyWhenCompletedChanged(arg);
+        }
+    }
 
 private:
     FlowRequestRouter* m_requestRouter;

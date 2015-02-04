@@ -56,17 +56,29 @@ private:
 
     //---------------------------------------- Q_PROPERTY
 public:
-    bool debug() const;
+    bool debug() const
+    {
+        return m_debug;
+    }
 
 //    int maxEventHistory() const;
 //
 //    QVariantList eventHistory() const;
 
-    QVariantMap currentStatus() const;
+    QVariantMap currentStatus() const
+    {
+        return m_currentStatus;
+    }
 
-    QVariantList alertHistory() const;
+    QVariantList alertHistory() const
+    {
+        return m_alertHistory;
+    }
 
-    int maxAlertHistory() const;
+    int maxAlertHistory() const
+    {
+        return m_maxAlertHistory;
+    }
 
 signals:
     void debugChanged(bool arg);
@@ -82,11 +94,25 @@ signals:
     void maxAlertHistoryChanged(int arg);
 
 public slots:
-    void setDebug(bool arg);
+    void setDebug(bool arg)
+    {
+        if (m_debug != arg) {
+            m_debug = arg;
+            emit debugChanged(arg);
+        }
+    }
 
 //    void setMaxEventHistory(int arg);
 
-    void setMaxAlertHistory(int arg);
+    void setMaxAlertHistory(int arg)
+    {
+        if (m_maxAlertHistory != arg) {
+            m_maxAlertHistory = arg;
+            while(m_alertHistory.count() > m_maxAlertHistory)
+                m_alertHistory.pop_front();
+            emit maxAlertHistoryChanged(arg);
+        }
+    }
 
 private:
     bool m_debug;

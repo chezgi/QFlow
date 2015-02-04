@@ -48,13 +48,25 @@ private:
 
 //----------------------------------------- Q_PROPERTY
 public:
-    QString uuid() const;
+    QString uuid() const
+    {
+        return m_uuid;
+    }
 
-    QDateTime creationTime() const;
+    QDateTime creationTime() const
+    {
+        return m_creationTime;
+    }
 
-    int flowObjectLifeTime() const;
+    int flowObjectLifeTime() const
+    {
+        return m_flowObjectLifeTime;
+    }
 
-    int flowObjectDeleteDelay() const;
+    int flowObjectDeleteDelay() const
+    {
+        return m_flowObjectDeleteDelay;
+    }
 
     FlowGraph* flowGraph() const
     {
@@ -62,11 +74,39 @@ public:
     }
 
 public slots:
-    void setCreationTime(QDateTime arg);
+    void setCreationTime(QDateTime arg)
+    {
+        if (m_creationTime != arg) {
+            m_creationTime = arg;
+            emit creationTimeChanged(arg);
+        }
+    }
 
-    void setFlowObjectLifeTime(int arg);
+    void setFlowObjectLifeTime(int arg)
+    {
+        if (m_flowObjectLifeTime != arg) {
+            m_flowObjectLifeTime = arg;
+            if(m_flowObjectLifeTime == 0)
+            {
+                lifetimeChecker.stop();
+            }
+            else
+            {
+                lifetimeChecker.setInterval(m_flowObjectLifeTime * 1000);
+                if(!lifetimeChecker.isActive())
+                    lifetimeChecker.start();
+            }
+            emit flowObjectLifeTimeChanged(arg);
+        }
+    }
 
-    void setFlowObjectDeleteDelay(int arg);
+    void setFlowObjectDeleteDelay(int arg)
+    {
+        if (m_flowObjectDeleteDelay != arg) {
+            m_flowObjectDeleteDelay = arg;
+            emit flowObjectDeleteDelayChanged(arg);
+        }
+    }
 
     void setFlowGraph(FlowGraph* arg)
     {
