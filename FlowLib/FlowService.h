@@ -68,9 +68,15 @@ private:
 
     //--------------------------------------------------------- Q_PROPERTY
 public:
-    int listenPort() const;
+    int listenPort() const
+    {
+        return m_listenPort;
+    }
 
-    bool debug() const;
+    bool debug() const
+    {
+        return m_debug;
+    }
 
     int authenticatedCount() const
     {
@@ -85,9 +91,21 @@ signals:
     void authenticatedCountChanged(int arg);
 
 public slots:
-    void setListenPort(int arg);
+    void setListenPort(int arg)
+    {
+        if (m_listenPort != arg) {
+            m_listenPort = arg;
+            emit listenPortChanged(arg);
+        }
+    }
 
-    void setDebug(bool arg);
+    void setDebug(bool arg)
+    {
+        if (m_debug != arg) {
+            m_debug = arg;
+            emit debugChanged(arg);
+        }
+    }
 
     void setAuthenticatedCount(int arg)
     {

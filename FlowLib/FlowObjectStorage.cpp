@@ -50,11 +50,6 @@ void FlowObjectStorage::removeByPacket(const QVariantMap &flowPacket)
     return remove(flowPacket.value(FlowObject::flowObjectIdTag()).toString());
 }
 
-bool FlowObjectStorage::debug() const
-{
-    return m_debug;
-}
-
 void FlowObjectStorage::remove(const QString &uuid)
 {    
     FlowObject *flowObject = flowObjectsByHash.take(uuid);
@@ -133,7 +128,6 @@ void FlowObjectStorage::objectExpiredEvent()
 
 void FlowObjectStorage::objectRemovedEvent()
 {
-//    if(debug())
     QObject *robject = sender();
     {
         QMutableHashIterator<QString,FlowObject *> hit(flowObjectsByHash);
@@ -160,10 +154,4 @@ void FlowObjectStorage::objectRemovedEvent()
     }
 }
 
-void FlowObjectStorage::setDebug(bool arg)
-{
-    if (m_debug != arg) {
-        m_debug = arg;
-        emit debugChanged(arg);
-    }
-}
+

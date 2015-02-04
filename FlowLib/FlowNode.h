@@ -11,7 +11,6 @@
 #include "FlowGraph.h"
 #include "FlowObjectStorage.h"
 #include "FlowJsonStorage.h"
-#include "FlowLogger.h"
 #include "FlowMonitor.h"
 #include "FlowService.h"
 #include "FlowNodeMonitorInfo.h"
@@ -98,27 +97,60 @@ private:
 public:
     QQmlListProperty<QObject> data(){ return QQmlListProperty<QObject>(this, 0, &FlowNode::append_data, nullptr, nullptr, nullptr);}
 
-    bool enabled() const;
+    bool enabled() const
+    {
+        return m_enabled;
+    }
 
-    bool debug() const;
+    bool debug() const
+    {
+        return m_debug;
+    }
 
-    QString name() const;
+    QString name() const
+    {
+        return m_name;
+    }
 
-    QString description() const;
+    QString description() const
+    {
+        return m_description;
+    }
 
-    FlowNodeMonitorInfo* monitorInfo() const;
+    FlowNodeMonitorInfo* monitorInfo() const
+    {
+        return m_monitorInfo;
+    }
 
-    quint64 nodeSendRequestCount() const;
+    quint64 nodeSendRequestCount() const
+    {
+        return m_nodeSendRequestCount;
+    }
 
-    quint64 nodeSendResponseCount() const;
+    quint64 nodeSendResponseCount() const
+    {
+        return m_nodeSendResponseCount;
+    }
 
-    quint64 nodeRecvRequestCount() const;
+    quint64 nodeRecvRequestCount() const
+    {
+        return m_nodeRecvRequestCount;
+    }
 
-    quint64 nodeRecvResponseCount() const;
+    quint64 nodeRecvResponseCount() const
+    {
+        return m_nodeRecvResponseCount;
+    }
 
-    quint64 nodeDropCount() const;
+    quint64 nodeDropCount() const
+    {
+        return m_nodeDropCount;
+    }
 
-    QString uuid() const;
+    QString uuid() const
+    {
+        return m_uuid;
+    }
 
     FlowNodeServiceInfo* serviceInfo() const
     {
@@ -145,13 +177,41 @@ signals:
     void nodeDropCountChanged(quint64 arg);
 
 public slots:
-    void setEnabled(bool arg);
+    void setEnabled(bool arg)
+    {
+        if (m_enabled != arg) {
+            m_enabled = arg;
+            emit enabledChanged(arg);
+        }
+    }
 
-    void setDebug(bool arg);
+    void setDebug(bool arg)
+    {
+        if (m_debug != arg) {
+            m_debug = arg;
+            //        for(FlowPort * port: ports())
+            //            port->setDebug(m_debug);
+            emit debugChanged(arg);
+        }
+    }
 
-    void setName(QString arg);
+    void setName(QString arg)
+    {
+        if (m_name != arg) {
+            m_name = arg;
+            if(monitorInfo()->name().isEmpty())
+                monitorInfo()->setName(m_name);
+            emit nameChanged(arg);
+        }
+    }
 
-    void setDescription(QString arg);
+    void setDescription(QString arg)
+    {
+        if (m_description != arg) {
+            m_description = arg;
+            emit descriptionChanged(arg);
+        }
+    }
 
 private:
     QList<QObject *> m_data;

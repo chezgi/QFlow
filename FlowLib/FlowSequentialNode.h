@@ -15,7 +15,10 @@ private slots:
 
     //------------------------------------------------ Q_PROPERTY
 public:
-    FlowRequestRouter* requestRouter() const;
+    FlowRequestRouter* requestRouter() const
+    {
+        return m_requestRouter;
+    }
 
 signals:
 public slots:

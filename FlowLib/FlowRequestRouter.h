@@ -57,11 +57,20 @@ private:
 
 //----------------------------------------------- properties
 public:
-    int ttl() const;
+    int ttl() const
+    {
+        return m_ttl;
+    }
 
-    QString name() const;
+    QString name() const
+    {
+        return m_name;
+    }
 
-    bool debug() const;
+    bool debug() const
+    {
+        return m_debug;
+    }
 
 signals:
     void ttlChanged(int arg);
@@ -71,11 +80,30 @@ signals:
     void debugChanged(bool arg);
 
 public slots:
-    void setTtl(int arg);
+    void setTtl(int arg)
+    {
+        if (m_ttl != arg) {
+            m_ttl = arg;
+            cleanupTimer->setInterval( qMax(m_ttl/2,1) * 1000);
+            emit ttlChanged(arg);
+        }
+    }
 
-    void setName(QString arg);
+    void setName(QString arg)
+    {
+        if (m_name != arg) {
+            m_name = arg;
+            emit nameChanged(arg);
+        }
+    }
 
-    void setDebug(bool arg);
+    void setDebug(bool arg)
+    {
+        if (m_debug != arg) {
+            m_debug = arg;
+            emit debugChanged(arg);
+        }
+    }
 
 private:
     int m_ttl;

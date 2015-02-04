@@ -325,29 +325,3 @@ void FlowService::connectionRegisteredEventsChanged()
     }
 }
 
-//--------------------------------------------------------- Q_PROPERTY
-int FlowService::listenPort() const
-{
-    return m_listenPort;
-}
-
-bool FlowService::debug() const
-{
-    return m_debug;
-}
-
-void FlowService::setListenPort(int arg)
-{
-    if (m_listenPort != arg) {
-        m_listenPort = arg;
-        emit listenPortChanged(arg);
-    }
-}
-
-void FlowService::setDebug(bool arg)
-{
-    if (m_debug != arg) {
-        m_debug = arg;
-        emit debugChanged(arg);
-    }
-}

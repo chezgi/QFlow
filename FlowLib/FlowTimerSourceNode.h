@@ -59,13 +59,42 @@ signals:
     void triggeredOnStartChanged(bool arg);
 
 public slots:
-    void setRunning(bool arg);
+    void setRunning(bool arg)
+    {
+        if (m_running != arg) {
+            m_running = arg;
+            if(m_running)
+                m_timer->start();
+            else
+                m_timer->stop();
+            emit runningChanged(arg);
+        }
+    }
 
-    void setInterval(int arg);
+    void setInterval(int arg)
+    {
+        if (m_interval != arg) {
+            m_interval = arg;
+            m_timer->setInterval(1000);
+            emit intervalChanged(arg);
+        }
+    }
 
-    void setRepeat(bool arg);
+    void setRepeat(bool arg)
+    {
+        if (m_repeat != arg) {
+            m_repeat = arg;
+            emit repeatChanged(arg);
+        }
+    }
 
-    void setTriggeredOnStart(bool arg);
+    void setTriggeredOnStart(bool arg)
+    {
+        if (m_triggeredOnStart != arg) {
+            m_triggeredOnStart = arg;
+            emit triggeredOnStartChanged(arg);
+        }
+    }
 
 private:
     bool m_running;

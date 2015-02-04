@@ -18,7 +18,6 @@ HEADERS += \
     FlowInOutNode.h \
     FlowSinkNode.h \
     FlowSourceNode.h \
-    FlowLogger.h \
     FlowTimerSourceNode.h \
     FlowMonitor.h \
     FlowNodeMonitorInfo.h \
@@ -43,7 +42,6 @@ SOURCES += \
     FlowInOutNode.cpp \
     FlowSinkNode.cpp \
     FlowSourceNode.cpp \
-    FlowLogger.cpp \
     FlowTimerSourceNode.cpp \
     FlowMonitor.cpp \
     FlowNodeMonitorInfo.cpp \

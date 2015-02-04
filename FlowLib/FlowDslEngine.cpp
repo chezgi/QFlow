@@ -18,7 +18,6 @@
 #include "FlowSinkNode.h"
 #include "FlowRelayNode.h"
 #include "FlowTimerSourceNode.h"
-#include "FlowLogger.h"
 #include "FlowTracer.h"
 #include "FlowMonitor.h"
 #include "FlowNodeMonitorInfo.h"
@@ -46,7 +45,6 @@ FlowDslEngine::FlowDslEngine(QObject *parent) :
     qmlRegisterType<FlowGraph>("Flow", 1, 0, "Graph");
     qmlRegisterType<FlowObjectStorage>("Flow", 1, 0, "ObjectStorage");
     qmlRegisterType<FlowJsonStorage>("Flow", 1, 0, "JsonStorage");
-    qmlRegisterType<FlowLogger>("Flow", 1, 0, "Logger");
     qmlRegisterType<FlowMonitor>("Flow", 1, 0, "Monitor");
 
     qmlRegisterType<FlowService>("Flow", 1, 0, "Service");

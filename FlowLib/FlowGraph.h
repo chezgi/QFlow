@@ -19,7 +19,6 @@ class FlowNode;
 class FlowInPort;
 class FlowObject;
 class FlowObjectStorage;
-class FlowLogger;
 class FlowMonitor;
 class FlowService;
 class FlowJsonStorage;
@@ -35,7 +34,6 @@ class FlowGraph : public QObject, public QQmlParserStatus
     Q_PROPERTY(QDateTime creationTime READ creationTime CONSTANT)
     Q_PROPERTY(FlowMonitor* monitor READ monitor WRITE setMonitor NOTIFY monitorChanged)
     Q_PROPERTY(FlowObjectStorage* objectStorage READ objectStorage CONSTANT)
-    Q_PROPERTY(FlowLogger* logger READ logger WRITE setLogger NOTIFY loggerChanged)
     Q_PROPERTY(FlowService* service READ service WRITE setService NOTIFY serviceChanged)
     Q_PROPERTY(FlowJsonStorage* jsonStorage READ jsonStorage CONSTANT)
     Q_PROPERTY(QObject* config READ config WRITE setConfig NOTIFY configChanged)
@@ -79,25 +77,50 @@ private:
 public:
     QQmlListProperty<QObject> data(){return QQmlListProperty<QObject>(this, m_data);}
 
-    QString name() const;
+    QString name() const
+    {
+        return m_name;
+    }
 
-    QString description() const;
+    QString description() const
+    {
+        return m_description;
+    }
 
-    FlowObjectStorage* objectStorage() const;
+    FlowObjectStorage* objectStorage() const
+    {
+        return m_objectStorage;
+    }
 
-    bool debug() const;
+    bool debug() const
+    {
+        return m_debug;
+    }
 
-    FlowLogger* logger() const;
+    FlowMonitor* monitor() const
+    {
+        return m_monitor;
+    }
 
-    FlowMonitor* monitor() const;
+    FlowService* service() const
+    {
+        return m_service;
+    }
 
-    FlowService* service() const;
+    QDateTime creationTime() const
+    {
+        return m_creationTime;
+    }
 
-    QDateTime creationTime() const;
+    QString uuid() const
+    {
+        return m_uuid;
+    }
 
-    QString uuid() const;
-
-    FlowJsonStorage* jsonStorage() const;
+    FlowJsonStorage* jsonStorage() const
+    {
+        return m_jsonStorage;
+    }
 
     QObject* config() const
     {
@@ -116,8 +139,6 @@ signals:
 
     void debugChanged(bool arg);
 
-    void loggerChanged(FlowLogger* arg);
-
     void monitorChanged(FlowMonitor* arg);
 
     void serviceChanged(FlowService* arg);
@@ -127,17 +148,50 @@ signals:
     void traceEnabledChanged(bool arg);
 
 public slots:
-    void setName(QString arg);
+    void setName(QString arg)
+    {
+        if (m_name != arg) {
+            m_name = arg;
+            emit nameChanged(arg);
+        }
+    }
 
-    void setDescription(QString arg);
+    void setDescription(QString arg)
+    {
+        if (m_description != arg) {
+            m_description = arg;
+            emit descriptionChanged(arg);
+        }
+    }
 
-    void setDebug(bool arg);
+    void setDebug(bool arg)
+    {
+        if (m_debug != arg) {
+            m_debug = arg;
+            emit debugChanged(arg);
+        }
+    }
 
-    void setLogger(FlowLogger* arg);
 
-    void setMonitor(FlowMonitor* arg);
+    void setMonitor(FlowMonitor* arg)
+    {
+        if (m_monitor != arg) {
+            if(m_defaultMonitorIsUsed)
+            {
+                m_defaultMonitorIsUsed = false;
+            }
+            m_monitor = arg;
+            emit monitorChanged(arg);
+        }
+    }
 
-    void setService(FlowService* arg);
+    void setService(FlowService* arg)
+    {
+        if (m_service != arg) {
+            m_service = arg;
+            emit serviceChanged(arg);
+        }
+    }
 
     void setConfig(QObject* arg)
     {
@@ -161,7 +215,6 @@ private:
     QString m_description;
     FlowObjectStorage *m_objectStorage;
     bool m_debug;
-    FlowLogger* m_logger;
     FlowMonitor* m_monitor;
     FlowService* m_service;
     QDateTime m_creationTime;

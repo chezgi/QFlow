@@ -47,21 +47,5 @@ void FlowParallelNode::processResponse(FlowOutPort *outPort, QVariantMap flowPac
     }
 }
 
-//------------------------------------------------ Q_PROPERTY
-FlowRequestRouter *FlowParallelNode::requestRouter() const
-{
-    return m_requestRouter;
-}
 
-bool FlowParallelNode::replyWhenCompleted() const
-{
-    return m_replyWhenCompleted;
-}
 
-void FlowParallelNode::setReplyWhenCompleted(bool arg)
-{
-    if (m_replyWhenCompleted != arg) {
-        m_replyWhenCompleted = arg;
-        emit replyWhenCompletedChanged(arg);
-    }
-}

@@ -52,9 +52,4 @@ void FlowSequentialNode::processResponse(FlowOutPort *outPort, QVariantMap flowP
     sendResponseToPort(inPort,flowPacket);
 }
 
-//------------------------------------------------ Q_PROPERTY
-FlowRequestRouter *FlowSequentialNode::requestRouter() const
-{
-    return m_requestRouter;
-}
 

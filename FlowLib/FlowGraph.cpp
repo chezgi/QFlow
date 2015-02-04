@@ -1,5 +1,4 @@
 #include "FlowGraph.h"
-#include "FlowLogger.h"
 #include "FlowMonitor.h"
 #include "FlowNode.h"
 #include "FlowService.h"
@@ -14,7 +13,6 @@ quint64 FlowGraph::traceId = 0;
 FlowGraph::FlowGraph(QObject *parent) :
     QObject(parent),
     m_objectStorage(new FlowObjectStorage(this)),
-    m_logger(new FlowLogger(this)),
     m_monitor(new FlowMonitor(this)),
     m_service(new FlowService(this)),
     m_jsonStorage(new FlowJsonStorage(this))
@@ -252,112 +250,3 @@ QVariantMap FlowGraph::createTrace(bool isRequest, QString node, QString port, Q
     return trace;
 }
 
-
-//------------------------------------- properties
-QString FlowGraph::name() const
-{
-    return m_name;
-}
-
-QString FlowGraph::description() const
-{
-    return m_description;
-}
-
-FlowObjectStorage *FlowGraph::objectStorage() const
-{
-    return m_objectStorage;
-}
-
-bool FlowGraph::debug() const
-{
-    return m_debug;
-}
-
-FlowLogger *FlowGraph::logger() const
-{
-    return m_logger;
-}
-
-FlowMonitor *FlowGraph::monitor() const
-{
-    return m_monitor;
-}
-
-FlowService *FlowGraph::service() const
-{
-    return m_service;
-}
-
-QDateTime FlowGraph::creationTime() const
-{
-    return m_creationTime;
-}
-
-QString FlowGraph::uuid() const
-{
-    return m_uuid;
-}
-
-FlowJsonStorage *FlowGraph::jsonStorage() const
-{
-    return m_jsonStorage;
-}
-
-
-
-void FlowGraph::setName(QString arg)
-{
-    if (m_name != arg) {
-        m_name = arg;
-        emit nameChanged(arg);
-    }
-}
-
-void FlowGraph::setDescription(QString arg)
-{
-    if (m_description != arg) {
-        m_description = arg;
-        emit descriptionChanged(arg);
-    }
-}
-
-void FlowGraph::setDebug(bool arg)
-{
-    if (m_debug != arg) {
-        m_debug = arg;
-        emit debugChanged(arg);
-    }
-}
-
-void FlowGraph::setLogger(FlowLogger *arg)
-{
-    if (m_logger != arg) {
-        if(m_defaultLoggerIsUsed)
-        {
-            m_defaultLoggerIsUsed = false;
-        }
-        m_logger = arg;
-        emit loggerChanged(arg);
-    }
-}
-
-void FlowGraph::setMonitor(FlowMonitor *arg)
-{
-    if (m_monitor != arg) {
-        if(m_defaultMonitorIsUsed)
-        {
-            m_defaultMonitorIsUsed = false;
-        }
-        m_monitor = arg;
-        emit monitorChanged(arg);
-    }
-}
-
-void FlowGraph::setService(FlowService *arg)
-{
-    if (m_service != arg) {
-        m_service = arg;
-        emit serviceChanged(arg);
-    }
-}

@@ -23,7 +23,6 @@ public:
     Q_INVOKABLE void remove(const QString &uuid);
     Q_INVOKABLE void removeByPacket(const QVariantMap &flowPacket);
 
-    bool debug() const;
 
 signals:
     void objectAdded(QString objectId);
@@ -38,13 +37,28 @@ private:
     QHash<QString,FlowObject *> flowObjectsByHash;
     QMap<QDateTime,QObject *> waitingForRemoveList;
     QTimer cleanupTimer;   
-    bool m_debug;
+
+    //------------------------------------------- Q_PROPERTY
+public:
+    bool debug() const
+    {
+        return m_debug;
+    }
 
 signals:
     void debugChanged(bool arg);
 
 public slots:
-    void setDebug(bool arg);
+    void setDebug(bool arg)
+    {
+        if (m_debug != arg) {
+            m_debug = arg;
+            emit debugChanged(arg);
+        }
+    }
+private:
+    bool m_debug;
+
 };
 
 #endif // FLOWOBJECTSTORAGE_H
