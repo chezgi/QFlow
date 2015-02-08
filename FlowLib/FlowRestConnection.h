@@ -1,13 +1,13 @@
-#ifndef FLOWSERVICECONNECTION_H
-#define FLOWSERVICECONNECTION_H
+#ifndef FLOWRESTCONNECTION_H
+#define FLOWRESTCONNECTION_H
 
 #include <QObject>
 #include <QWebSocket>
 #include <QDateTime>
 
-class FlowService;
+class FlowRestService;
 class FlowNode;
-class FlowServiceConnection : public QObject
+class FlowRestConnection : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
@@ -21,8 +21,8 @@ class FlowServiceConnection : public QObject
     Q_PROPERTY(QString description READ description CONSTANT)
 
 public:
-    explicit FlowServiceConnection(QWebSocket* sock,QObject *parent = 0);
-    ~FlowServiceConnection();
+    explicit FlowRestConnection(QWebSocket* sock,QObject *parent = 0);
+    ~FlowRestConnection();
     void sendMessageToClient(const QByteArray &message);
     void closeConnection();
 
@@ -154,4 +154,4 @@ private:
 };
 
 
-#endif // FLOWSERVICECONNECTION_H
+#endif // FLOWRESTCONNECTION_H

@@ -11,18 +11,11 @@
 #include "FlowJsonStorage.h"
 #include "FlowRequestRouter.h"
 
-#include "FlowInOutNode.h"
-#include "FlowSequentialNode.h"
-#include "FlowParallelNode.h"
-#include "FlowSourceNode.h"
-#include "FlowSinkNode.h"
-#include "FlowRelayNode.h"
-#include "FlowTimerSourceNode.h"
 #include "FlowTracer.h"
 #include "FlowMonitor.h"
 #include "FlowNodeMonitorInfo.h"
-#include "FlowService.h"
-#include "FlowServiceConnection.h"
+#include "FlowRestService.h"
+#include "FlowRestConnection.h"
 #include "FlowNodeServiceInfo.h"
 
 FlowDslEngine* FlowDslEngine::self = nullptr;
@@ -40,14 +33,14 @@ FlowDslEngine::FlowDslEngine(QObject *parent) :
     qmlRegisterUncreatableType<FlowPort>("Flow", 1, 0, "Port","Use Directioned Ports.");
     qmlRegisterUncreatableType<FlowNodeMonitorInfo>("Flow", 1, 0, "NodeMonitorInfo","Only usable as flownode.");
     qmlRegisterUncreatableType<FlowNodeServiceInfo>("Flow", 1, 0, "NodeServiceInfo","Only usable as flownode.");
-    qmlRegisterUncreatableType<FlowServiceConnection>("Flow", 1, 0, "ServiceConnection","Only for FlowService");
+    qmlRegisterUncreatableType<FlowRestConnection>("Flow", 1, 0, "RestConnection","Only for FlowService");
 
     qmlRegisterType<FlowGraph>("Flow", 1, 0, "Graph");
     qmlRegisterType<FlowObjectStorage>("Flow", 1, 0, "ObjectStorage");
     qmlRegisterType<FlowJsonStorage>("Flow", 1, 0, "JsonStorage");
     qmlRegisterType<FlowMonitor>("Flow", 1, 0, "Monitor");
 
-    qmlRegisterType<FlowService>("Flow", 1, 0, "Service");
+    qmlRegisterType<FlowRestService>("Flow", 1, 0, "Service");
 
     qmlRegisterType<FlowNode>("Flow", 1, 0, "Node");
 
@@ -56,14 +49,6 @@ FlowDslEngine::FlowDslEngine(QObject *parent) :
     qmlRegisterType<FlowOutPort>("Flow", 1, 0, "OutPort");
 
 
-    qmlRegisterType<FlowInOutNode>("Flow", 1, 0, "InOutNode");
-    qmlRegisterType<FlowInNode>("Flow", 1, 0, "InNode");
-    qmlRegisterType<FlowOutNode>("Flow", 1, 0, "OutNode");
-    qmlRegisterType<FlowSequentialNode>("Flow", 1, 0, "SequentialNode");
-    qmlRegisterType<FlowRelayNode>("Flow", 1, 0, "RelayNode");
-    qmlRegisterType<FlowSinkNode>("Flow", 1, 0, "SinkNode");
-    qmlRegisterType<FlowSourceNode>("Flow", 1, 0, "SourceNode");
-    qmlRegisterType<FlowTimerSourceNode>("Flow", 1, 0, "TimerSourceNode");
 
 
     engine = new QQmlEngine(this);

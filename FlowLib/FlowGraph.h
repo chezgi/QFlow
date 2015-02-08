@@ -20,7 +20,7 @@ class FlowInPort;
 class FlowObject;
 class FlowObjectStorage;
 class FlowMonitor;
-class FlowService;
+class FlowRestService;
 class FlowJsonStorage;
 
 class FlowGraph : public QObject, public QQmlParserStatus
@@ -34,7 +34,7 @@ class FlowGraph : public QObject, public QQmlParserStatus
     Q_PROPERTY(QDateTime creationTime READ creationTime CONSTANT)
     Q_PROPERTY(FlowMonitor* monitor READ monitor WRITE setMonitor NOTIFY monitorChanged)
     Q_PROPERTY(FlowObjectStorage* objectStorage READ objectStorage CONSTANT)
-    Q_PROPERTY(FlowService* service READ service WRITE setService NOTIFY serviceChanged)
+    Q_PROPERTY(FlowRestService* restService READ restService  CONSTANT)
     Q_PROPERTY(FlowJsonStorage* jsonStorage READ jsonStorage CONSTANT)
     Q_PROPERTY(QObject* config READ config WRITE setConfig NOTIFY configChanged)
     Q_PROPERTY(bool traceEnabled READ traceEnabled WRITE setTraceEnabled NOTIFY traceEnabledChanged)
@@ -102,9 +102,9 @@ public:
         return m_monitor;
     }
 
-    FlowService* service() const
+    FlowRestService* restService() const
     {
-        return m_service;
+        return m_restService;
     }
 
     QDateTime creationTime() const
@@ -140,8 +140,6 @@ signals:
     void debugChanged(bool arg);
 
     void monitorChanged(FlowMonitor* arg);
-
-    void serviceChanged(FlowService* arg);
 
     void configChanged(QObject* arg);
 
@@ -185,14 +183,6 @@ public slots:
         }
     }
 
-    void setService(FlowService* arg)
-    {
-        if (m_service != arg) {
-            m_service = arg;
-            emit serviceChanged(arg);
-        }
-    }
-
     void setConfig(QObject* arg)
     {
         if (m_config != arg) {
@@ -216,7 +206,7 @@ private:
     FlowObjectStorage *m_objectStorage;
     bool m_debug;
     FlowMonitor* m_monitor;
-    FlowService* m_service;
+    FlowRestService* m_restService;
     QDateTime m_creationTime;
     QString m_uuid;
     FlowJsonStorage* m_jsonStorage;

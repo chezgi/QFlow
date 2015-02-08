@@ -1,7 +1,7 @@
-#include "FlowServiceConnection.h"
+#include "FlowRestConnection.h"
 #include <QUuid>
 
-FlowServiceConnection::FlowServiceConnection(QWebSocket *sock, QObject *parent) :
+FlowRestConnection::FlowRestConnection(QWebSocket *sock, QObject *parent) :
     QObject(parent)
 {
     m_uuid = QUuid::createUuid().toString();
@@ -16,7 +16,7 @@ FlowServiceConnection::FlowServiceConnection(QWebSocket *sock, QObject *parent) 
 
 }
 
-FlowServiceConnection::~FlowServiceConnection()
+FlowRestConnection::~FlowRestConnection()
 {
     if(m_socket)
     {
@@ -26,29 +26,29 @@ FlowServiceConnection::~FlowServiceConnection()
     }
 }
 
-void FlowServiceConnection::sendMessageToClient(const QByteArray &message)
+void FlowRestConnection::sendMessageToClient(const QByteArray &message)
 {
     if(socket()->state() != QAbstractSocket::ConnectedState)
         return;
     socket()->sendTextMessage(message);
 }
 
-void FlowServiceConnection::closeConnection()
+void FlowRestConnection::closeConnection()
 {
     m_socket->close();
 }
 
-void FlowServiceConnection::socketReadEvent(QString message)
+void FlowRestConnection::socketReadEvent(QString message)
 {
     emit messageFromClient(message);
 }
 
-void FlowServiceConnection::socketErrorEvent()
+void FlowRestConnection::socketErrorEvent()
 {
     qDebug() << "[FlowConnection]: Socket Error:" << description() << socket()->errorString();
 }
 
-void FlowServiceConnection::socketDisconnectEvent()
+void FlowRestConnection::socketDisconnectEvent()
 {
     emit clientDisconnected();
 }

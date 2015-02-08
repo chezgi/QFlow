@@ -1,7 +1,7 @@
 #include "FlowGraph.h"
 #include "FlowMonitor.h"
 #include "FlowNode.h"
-#include "FlowService.h"
+#include "FlowRestService.h"
 #include "FlowJsonStorage.h"
 #include "FlowObjectStorage.h"
 #include "FlowTracer.h"
@@ -14,7 +14,7 @@ FlowGraph::FlowGraph(QObject *parent) :
     QObject(parent),
     m_objectStorage(new FlowObjectStorage(this)),
     m_monitor(new FlowMonitor(this)),
-    m_service(new FlowService(this)),
+    m_restService(new FlowRestService(this)),
     m_jsonStorage(new FlowJsonStorage(this))
 {
     m_traceEnabled = false;

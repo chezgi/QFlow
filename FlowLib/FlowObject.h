@@ -8,12 +8,6 @@
 #include <QVariantMap>
 #include <QUuid>
 
-
-/*
- *
- *
- */
-
 typedef QVariantMap FlowPacket;
 class FlowGraph;
 class FlowObject : public QObject

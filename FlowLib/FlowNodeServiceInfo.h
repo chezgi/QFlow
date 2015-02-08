@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtQml/QQmlParserStatus>
 
-#include "FlowServiceConnection.h"
+#include "FlowRestConnection.h"
 class FlowNode;
 class FlowNodeServiceInfo : public QObject, public QQmlParserStatus
 {
@@ -20,7 +20,7 @@ class FlowNodeServiceInfo : public QObject, public QQmlParserStatus
 public:
     explicit FlowNodeServiceInfo(FlowNode *parent = 0);
 
-    Q_INVOKABLE FlowServiceConnection *getConnection(QString clientId);
+    Q_INVOKABLE FlowRestConnection *getConnection(QString clientId);
     Q_INVOKABLE void broadcast(QVariantMap data);
     Q_INVOKABLE void sendTo(QString clientId, QVariantMap data);
     Q_INVOKABLE void sendErrorTo(QString clientId, QString errorMessage, QVariant request);

@@ -12,7 +12,7 @@
 #include "FlowObjectStorage.h"
 #include "FlowJsonStorage.h"
 #include "FlowMonitor.h"
-#include "FlowService.h"
+#include "FlowRestService.h"
 #include "FlowNodeMonitorInfo.h"
 #include "FlowCommunicationUtils.h"
 #include "FlowNodeServiceInfo.h"
@@ -22,7 +22,7 @@ class FlowNode : public QObject, public QQmlParserStatus
     friend class FlowPort;
     friend class FlowInPort;
     friend class FlowOutPort;
-    friend class FlowService;
+    friend class FlowRestService;
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

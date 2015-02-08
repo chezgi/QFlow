@@ -11,22 +11,14 @@ HEADERS += \
     FlowRequestRouter.h \
     FlowGraph.h \
     FlowObject.h \
-    FlowParallelNode.h \
-    FlowSequentialNode.h \
-    FlowPacket.h \
-    FlowRelayNode.h \
-    FlowInOutNode.h \
-    FlowSinkNode.h \
-    FlowSourceNode.h \
-    FlowTimerSourceNode.h \
     FlowMonitor.h \
     FlowNodeMonitorInfo.h \
     FlowCommunicationUtils.h \
-    FlowService.h \
-    FlowServiceConnection.h \
     FlowObjectStorage.h \
     FlowJsonStorage.h \    
-    FlowNodeServiceInfo.h
+    FlowNodeServiceInfo.h \
+    FlowRestService.h \
+    FlowRestConnection.h
 
 SOURCES += \
     FlowDslEngine.cpp \
@@ -35,19 +27,11 @@ SOURCES += \
     FlowRequestRouter.cpp \
     FlowGraph.cpp \
     FlowObject.cpp \
-    FlowParallelNode.cpp \
-    FlowSequentialNode.cpp \
-    FlowPacket.cpp \
-    FlowRelayNode.cpp \
-    FlowInOutNode.cpp \
-    FlowSinkNode.cpp \
-    FlowSourceNode.cpp \
-    FlowTimerSourceNode.cpp \
     FlowMonitor.cpp \
     FlowNodeMonitorInfo.cpp \
     FlowCommunicationUtils.cpp \
-    FlowService.cpp \
-    FlowServiceConnection.cpp \
     FlowObjectStorage.cpp \
     FlowJsonStorage.cpp \
-    FlowNodeServiceInfo.cpp
+    FlowNodeServiceInfo.cpp \
+    FlowRestService.cpp \
+    FlowRestConnection.cpp

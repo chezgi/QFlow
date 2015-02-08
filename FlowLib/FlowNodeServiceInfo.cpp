@@ -14,34 +14,34 @@ FlowNodeServiceInfo::FlowNodeServiceInfo(FlowNode *parent) :
     QTimer::singleShot(0,this,SLOT(checkInitialization()));
 }
 
-FlowServiceConnection *FlowNodeServiceInfo::getConnection(QString clientId)
+FlowRestConnection *FlowNodeServiceInfo::getConnection(QString clientId)
 {
     FlowNode * node = (FlowNode *)parent();
-    return node->flowGraph()->service()->getConnection(clientId);
+    return node->flowGraph()->restService()->getConnection(clientId);
 }
 
 void FlowNodeServiceInfo::broadcast(QVariantMap data)
 {
     FlowNode * node = (FlowNode *)parent();
-    return node->flowGraph()->service()->broadcast(name(),data);
+    return node->flowGraph()->restService()->broadcast(name(),data);
 }
 
 void FlowNodeServiceInfo::sendTo(QString clientId, QVariantMap data)
 {
     FlowNode * node = (FlowNode *)parent();
-    return node->flowGraph()->service()->sendTo(clientId,name(),data);
+    return node->flowGraph()->restService()->sendTo(clientId,name(),data);
 }
 
 void FlowNodeServiceInfo::sendErrorTo(QString clientId, QString errorMessage, QVariant request)
 {
     FlowNode * node = (FlowNode *)parent();
-    return node->flowGraph()->service()->sendErrorTo(clientId,errorMessage,name(),request);
+    return node->flowGraph()->restService()->sendErrorTo(clientId,errorMessage,name(),request);
 }
 
 bool FlowNodeServiceInfo::hasRegisteredClient()
 {
     FlowNode * node = (FlowNode *)parent();
-    return node->flowGraph()->service()->hasRegisteredClient(name());
+    return node->flowGraph()->restService()->hasRegisteredClient(name());
 }
 
 void FlowNodeServiceInfo::componentComplete()
@@ -53,7 +53,7 @@ void FlowNodeServiceInfo::componentComplete()
         if(debug())
             qDebug() << "registering service[" << node->name() << "]:" << name();
         if(node->flowGraph())
-            node->flowGraph()->service()->registerServiceProvider(node,name(),api(),anonymousAllowed());
+            node->flowGraph()->restService()->registerServiceProvider(node,name(),api(),anonymousAllowed());
         else
             qDebug() << "Alert: flowGraph not valid at EnableService" << node->flowGraph()->name()+":"+node->name();
     }
@@ -81,7 +81,7 @@ void FlowNodeServiceInfo::setEnabled(bool arg)
                     qDebug() << "registering service[" << node->name() << "]:" << name();
 
                 if(node->flowGraph())
-                    node->flowGraph()->service()->registerServiceProvider(node,name(),api());
+                    node->flowGraph()->restService()->registerServiceProvider(node,name(),api());
                 else
                     qDebug() << "Alert: flowGraph not valid at EnableService" << node->flowGraph()->name()+":"+node->name();
             }else
@@ -90,7 +90,7 @@ void FlowNodeServiceInfo::setEnabled(bool arg)
                     qDebug() << "unregistering service[" << node->name() << "]:" << name();
 
                 if(node->flowGraph())
-                    node->flowGraph()->service()->unregisterServiceProvider(name());
+                    node->flowGraph()->restService()->unregisterServiceProvider(name());
             }
         }
         emit enabledChanged(arg);

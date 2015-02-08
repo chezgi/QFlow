@@ -1,63 +1,65 @@
-#include "FlowService.h"
+#include "FlowRestService.h"
 #include "FlowNode.h"
 //#include "FlowCommunicationUtils.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 
 
-FlowService::FlowService(QObject *parent) :
+FlowRestService::FlowRestService(QObject *parent) :
     QObject(parent),
-    m_serverSocket(new QWebSocketServer("FlowService",QWebSocketServer::NonSecureMode,this))
+    m_serverSocket(new QWebSocketServer("FlowRestService",QWebSocketServer::NonSecureMode,this))
 {
     m_listenPort = 8888;
     m_debug = false;
     m_authenticatedCount = 0;
 
     serviceApiMap["api"] = "c2s: { api:{} }  s2c:{ api:{} }";
-    serviceApiMap["ping"] = "c2s: { ping:{} }  s2c:{ pong:{} }";
+//    serviceApiMap["ping"] = "c2s: { ping:{} }  s2c:{ pong:{} }";
+//    serviceApiMap["topology"] = "c2s:{topology:{} s2c:{topology:{} }";
+
 //    serviceApiMap["events"] = "c2s: { events:{register:[]} }  s2c:{events:{registered:true}}";
 
-    internalServices << "api" << "ping";
+    internalServices << "api";
 
-    connect(m_serverSocket,&QWebSocketServer::newConnection,this,&FlowService::newConnectionEvent);
+    connect(m_serverSocket,&QWebSocketServer::newConnection,this,&FlowRestService::newConnectionEvent);
 }
 
-void FlowService::start()
+void FlowRestService::start()
 {
     if(listenPort() > 0)
     {
         if(!m_serverSocket->listen(QHostAddress::Any,listenPort()))
         {
-            qDebug() << "[FlowService] Start Error:" << m_serverSocket->errorString() << listenPort();
+            qDebug() << "[FlowRestService] Start Error:" << m_serverSocket->errorString() << listenPort();
         }else
         {
             if(debug())
-                qDebug() << "[FlowService] Started:" << listenPort();
+                qDebug() << "[FlowRestService] Started:" << listenPort();
         }
     }
     else
-        qDebug() << "[FlowService]: Listen port Invalid:" << listenPort();
+        qDebug() << "[FlowRestService]: Listen port Invalid:" << listenPort();
 }
 
-void FlowService::stop()
+void FlowRestService::stop()
 {
     m_serverSocket->close();
     // close all connections
-    QMap<QString,FlowServiceConnection*> tmpConnectionMap = connectionMap;
+    QMap<QString,FlowRestConnection*> tmpConnectionMap = connectionMap;
     connectionMap.clear();
-    for(FlowServiceConnection *connection:tmpConnectionMap)
+    for(FlowRestConnection *connection:tmpConnectionMap)
     {
         connection->deleteLater();
     }
     tmpConnectionMap.clear();
 }
 
-void FlowService::registerServiceProvider(FlowNode *node, QString serviceName,QString serviceApi,bool annonymousAllowed)
+void FlowRestService::registerServiceProvider(FlowNode *node, QString serviceName,QString serviceApi,bool annonymousAllowed)
 {
     if(serviceProvicerMap.contains(serviceName))
         qDebug() << "Service Provider Conflict for service:"<< serviceName;
     if(debug())
-        qDebug() << "[FlowService] Service Registered: " << serviceName;
+        qDebug() << "[FlowRestService] Service Registered: " << serviceName;
     serviceApiMap[serviceName] = serviceApi;
     serviceProvicerMap[serviceName] = node;
     if(annonymousAllowed)
@@ -66,28 +68,28 @@ void FlowService::registerServiceProvider(FlowNode *node, QString serviceName,QS
 
 }
 
-void FlowService::unregisterServiceProvider(QString serviceName)
+void FlowRestService::unregisterServiceProvider(QString serviceName)
 {
     if(debug())
-        qDebug() << "[FlowService] Service UnRegistered: " << serviceName;
+        qDebug() << "[FlowRestService] Service UnRegistered: " << serviceName;
 
     serviceProvicerMap.remove(serviceName);
     anonServices.removeAll(serviceName);
     serviceApiMap.remove(serviceName);
 }
 
-FlowServiceConnection *FlowService::getConnection(QString clientId)
+FlowRestConnection *FlowRestService::getConnection(QString clientId)
 {
     return connectionMap.value(clientId,nullptr);
 }
 
-QList<FlowServiceConnection *> FlowService::allConnections()
+QList<FlowRestConnection *> FlowRestService::allConnections()
 {
     return connectionMap.values();
 }
 
 
-void FlowService::handleInternalService(QString clientId,QString serviceName,QVariantMap requestData)
+void FlowRestService::handleInternalService(QString clientId,QString serviceName,QVariantMap requestData)
 {
     Q_UNUSED(requestData)
     if(serviceName == "api")
@@ -95,17 +97,27 @@ void FlowService::handleInternalService(QString clientId,QString serviceName,QVa
         sendTo(clientId,serviceName,serviceApiMap);
         return;
     }
-    if(serviceName == "ping")
-    {
-        QVariantMap resultMap;
-        resultMap["pong"] = QVariantMap();
-        sendTo(clientId,"ping",resultMap);
-        return;
-    }
+//    if(serviceName == "ping")
+//    {
+//        QVariantMap resultMap;
+//        resultMap["pong"] = QVariantMap();
+//        sendTo(clientId,"ping",resultMap);
+//        return;
+//    }
+//    if(serviceName == "topology")
+//    {
+//        FlowGraph *graph=qobject_cast<FlowGraph*>(parent());
+//        if(!graph)
+//            return;
+//        QVariantMap sendMap;
+//        sendMap[command] = graph->topologyMap();
+//        sendTo(clientId,serviceName,sendMap);
+//        return;
+//    }
 
 //    if(serviceName == "events")
 //    {
-//        FlowServiceConnection *connection = getConnection(clientId);
+//        FlowRestServiceConnection *connection = getConnection(clientId);
 //        if(!connection)
 //            return;
 //        if(requestData.contains("register"))
@@ -119,17 +131,17 @@ void FlowService::handleInternalService(QString clientId,QString serviceName,QVa
 //    }
 }
 
-void FlowService::broadcast(QString serviceName, QVariantMap data)
+void FlowRestService::broadcast(QString serviceName, QVariantMap data)
 {
     QVariantMap sendMap;
     sendMap[serviceName] = data;
 
     if(debug())
-        qDebug() << "[FlowService] sending to all: " << serviceName;
+        qDebug() << "[FlowRestService] sending to all: " << serviceName;
 
     QJsonDocument jsonDoc = QJsonDocument::fromVariant(sendMap);
     QByteArray msg = jsonDoc.toJson();
-    for(FlowServiceConnection *connection:connectionMap.values())
+    for(FlowRestConnection *connection:connectionMap.values())
     {
         if(!connection->authenticated())
             continue;
@@ -138,27 +150,27 @@ void FlowService::broadcast(QString serviceName, QVariantMap data)
     }
 }
 
-void FlowService::sendTo(QString clientId, QString serviceName, QVariantMap data)
+void FlowRestService::sendTo(QString clientId, QString serviceName, QVariantMap data)
 {
     if(debug())
-        qDebug() << "[FlowService] sending to one: " << serviceName;
+        qDebug() << "[FlowRestService] sending to one: " << serviceName;
 
     QVariantMap sendMap;
     sendMap[serviceName] = data;
-    FlowServiceConnection *connection = getConnection(clientId);
+    FlowRestConnection *connection = getConnection(clientId);
     if(!connection)
         return;
     QJsonDocument jsonDoc = QJsonDocument::fromVariant(sendMap);
     connection->sendMessageToClient(jsonDoc.toJson());
 }
 
-void FlowService::sendErrorTo(QString clientId, QString errorMessage,QString serviceName,QVariant requestData)
+void FlowRestService::sendErrorTo(QString clientId, QString errorMessage,QString serviceName,QVariant requestData)
 {
     QVariantMap sendMap;
     QVariantMap errorMap;
 
     if(debug())
-        qDebug() << "[FlowService] sending error: " << serviceName << " Error:"<<errorMessage;
+        qDebug() << "[FlowRestService] sending error: " << serviceName << " Error:"<<errorMessage;
 
     errorMap["errorString"] = errorMessage;
     errorMap["service"] = serviceName;
@@ -166,30 +178,30 @@ void FlowService::sendErrorTo(QString clientId, QString errorMessage,QString ser
     sendMap["error"] = errorMap;
 
 
-    FlowServiceConnection *connection = getConnection(clientId);
+    FlowRestConnection *connection = getConnection(clientId);
     if(!connection)
         return;
     QJsonDocument jsonDoc = QJsonDocument::fromVariant(sendMap);
     connection->sendMessageToClient(jsonDoc.toJson());
 }
 
-bool FlowService::hasRegisteredClient(QString serviceName)
+bool FlowRestService::hasRegisteredClient(QString serviceName)
 {
     if(registeredMap.contains(serviceName) && !registeredMap[serviceName].isEmpty())
         return true;
     return false;
 }
 
-void FlowService::newConnectionEvent()
+void FlowRestService::newConnectionEvent()
 {
     QWebSocket *socket = m_serverSocket->nextPendingConnection();
     if(!socket)
         return;
 
     if(debug())
-        qDebug() << "[FlowService] New Connection";
+        qDebug() << "[FlowRestService] New Connection";
 
-    FlowServiceConnection *connection = new FlowServiceConnection(socket,this);
+    FlowRestConnection *connection = new FlowRestConnection(socket,this);
     connect(connection,SIGNAL(messageFromClient(QString)),SLOT(connectionMessageReceivedEvent(QString)));
     connect(connection,SIGNAL(clientDisconnected()),SLOT(connectinDisconnectedEvent()));
     connect(connection,SIGNAL(authenticatedChanged(bool)),SLOT(connectionAuthenticationChanged()));
@@ -199,28 +211,28 @@ void FlowService::newConnectionEvent()
     emit connectionAdded(connection->uuid());
 }
 
-void FlowService::connectionMessageReceivedEvent(QString message)
+void FlowRestService::connectionMessageReceivedEvent(QString message)
 {
-    FlowServiceConnection *connection = qobject_cast<FlowServiceConnection*>(sender());
+    FlowRestConnection *connection = qobject_cast<FlowRestConnection*>(sender());
     if(!connection)
         return;
     if(debug())
-        qDebug() << "[FlowService]: Connection Read[" << connection->description()  << "] " << message;
+        qDebug() << "[FlowRestService]: Connection Read[" << connection->description()  << "] " << message;
 
     QJsonParseError jsonError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(message.toLatin1(),&jsonError);
     if(jsonError.error != QJsonParseError::NoError)
     {
-        qDebug() << "[FlowService]:Error Accoured in  FlowService Received Message Parsing:" << jsonError.errorString() << " At Offset:" << jsonError.offset;
+        qDebug() << "[FlowRestService]:Error Accoured in  FlowRestService Received Message Parsing:" << jsonError.errorString() << " At Offset:" << jsonError.offset;
         qDebug() << "  Received Message is:" << message;
         sendErrorTo(connection->uuid(),"Message Parsing Error:" +jsonError.errorString(),"",message);
         return;
     }
     if(!jsonDoc.isObject() || jsonDoc.isEmpty())
     {
-        qDebug() << "[FlowService]: Received Message is not object or empty";
+        qDebug() << "[FlowRestService]: Received Message is not object or empty";
         qDebug() << "  Received Message is:" << message;
-        sendErrorTo(connection->uuid(),"FlowService Received Message is not object or empty","",message);
+        sendErrorTo(connection->uuid(),"FlowRestService Received Message is not object or empty","",message);
         return;
     }
     bool showReceivedMessage = false;
@@ -228,7 +240,7 @@ void FlowService::connectionMessageReceivedEvent(QString message)
     {
         if(!jsonDoc.object()[serviceName].isObject())
         {
-            qDebug() << "[FlowService]: Received Message service format error for service:" << serviceName;
+            qDebug() << "[FlowRestService]: Received Message service format error for service:" << serviceName;
             sendErrorTo(connection->uuid(),"Message Must Be Object",serviceName,message);
             showReceivedMessage = true;
             continue;
@@ -253,7 +265,7 @@ void FlowService::connectionMessageReceivedEvent(QString message)
             }
         }else
         {
-            qDebug() << "[FlowService]: Data From Connection Without Any ServiceProvider:" << serviceName;
+            qDebug() << "[FlowRestService]: Data From Connection Without Any ServiceProvider:" << serviceName;
             sendErrorTo(connection->uuid(),"No Service Provider",serviceName,message);
             showReceivedMessage = true;
         }
@@ -269,13 +281,13 @@ void FlowService::connectionMessageReceivedEvent(QString message)
 }
 
 
-void FlowService::connectinDisconnectedEvent()
+void FlowRestService::connectinDisconnectedEvent()
 {
-    FlowServiceConnection *connection = qobject_cast<FlowServiceConnection*>(sender());;
+    FlowRestConnection *connection = qobject_cast<FlowRestConnection*>(sender());;
     if(!connection)
         return;
     if(debug())
-        qDebug() << "[FlowService] Connection Closed:" << connection->description();
+        qDebug() << "[FlowRestService] Connection Closed:" << connection->description();
 
     connection->disconnect(this);
     if(connection->authenticated())
@@ -289,9 +301,9 @@ void FlowService::connectinDisconnectedEvent()
     connection->deleteLater();
 }
 
-void FlowService::connectionAuthenticationChanged()
+void FlowRestService::connectionAuthenticationChanged()
 {
-    FlowServiceConnection *connection = qobject_cast<FlowServiceConnection*>(sender());
+    FlowRestConnection *connection = qobject_cast<FlowRestConnection*>(sender());
     if(connection->authenticated())
     {
         setAuthenticatedCount(authenticatedCount() + 1);
@@ -302,9 +314,9 @@ void FlowService::connectionAuthenticationChanged()
     }
 }
 
-void FlowService::connectionRegisteredEventsChanged()
+void FlowRestService::connectionRegisteredEventsChanged()
 {
-    FlowServiceConnection *connection = qobject_cast<FlowServiceConnection*>(sender());
+    FlowRestConnection *connection = qobject_cast<FlowRestConnection*>(sender());
 
     // remove old registered events
     for(QString regService:registeredMap.keys())

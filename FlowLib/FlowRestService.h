@@ -1,5 +1,5 @@
-#ifndef FLOWNODESERVICE_H
-#define FLOWNODESERVICE_H
+#ifndef FLOWRESTSERVICE_H
+#define FLOWRESTSERVICE_H
 
 #include <QObject>
 //#include <QTcpSocket>
@@ -9,7 +9,7 @@
 //#include <QTcpServer>
 #include <QTimer>
 
-#include "FlowServiceConnection.h"
+#include "FlowRestConnection.h"
 
 /*
    json format:
@@ -17,7 +17,7 @@
    "servicename":{}
  */
 class FlowNode;
-class FlowService : public QObject
+class FlowRestService : public QObject
 {
     friend class FlowNodeServiceInfo;
     Q_OBJECT
@@ -26,17 +26,17 @@ class FlowService : public QObject
     Q_PROPERTY(int authenticatedCount READ authenticatedCount WRITE setAuthenticatedCount NOTIFY authenticatedCountChanged)
 
 public:
-    explicit FlowService(QObject *parent = 0);
+    explicit FlowRestService(QObject *parent = 0);
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop();
 
-    QList<FlowServiceConnection *> allConnections();
+    QList<FlowRestConnection *> allConnections();
 
 
 private:
     void registerServiceProvider(FlowNode *node, QString serviceName, QString serviceApi, bool annonymousAllowed = false);
     void unregisterServiceProvider(QString serviceName);
-    FlowServiceConnection *getConnection(QString clientId);
+    FlowRestConnection *getConnection(QString clientId);
 
     void handleInternalService(QString clientId,QString serviceName,QVariantMap requestData);
 
@@ -58,7 +58,7 @@ private slots:
 
 private:
     QWebSocketServer *m_serverSocket;
-    QMap<QString,FlowServiceConnection*> connectionMap;
+    QMap<QString,FlowRestConnection*> connectionMap;
     QMap<QString,FlowNode *> serviceProvicerMap;
     QVariantMap serviceApiMap;
     QStringList anonServices;
@@ -121,4 +121,4 @@ private:
     int m_authenticatedCount;
 };
 
-#endif // FLOWNODESERVICE_H
+#endif // FLOWRESTSERVICE_H
