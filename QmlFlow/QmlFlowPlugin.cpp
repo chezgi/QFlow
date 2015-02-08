@@ -1,7 +1,6 @@
-#include "FlowDslEngine.h"
+#include "QmlFlowPlugin.h"
 
-#include <QtCore/QUrl>
-#include <QtCore/QDebug>
+#include <qqml.h>
 
 #include "FlowGraph.h"
 #include "FlowNode.h"
@@ -18,17 +17,11 @@
 #include "FlowRestConnection.h"
 #include "FlowNodeServiceInfo.h"
 
-FlowDslEngine* FlowDslEngine::self = nullptr;
-FlowDslEngine *FlowDslEngine::instance()
-{
-    if(!self)
-        self = new FlowDslEngine;
-    return self;
-}
 
-FlowDslEngine::FlowDslEngine(QObject *parent) :
-    QObject(parent)
+void QmlFlowPlugin::registerTypes(const char *uri)
 {
+    // @uri com.chezgi.qmlflow
+
     qmlRegisterUncreatableType<FlowObject>("Flow", 1, 0, "Object","Flow.Object is pure Virtual. use subclasses.");
     qmlRegisterUncreatableType<FlowPort>("Flow", 1, 0, "Port","Use Directioned Ports.");
     qmlRegisterUncreatableType<FlowNodeMonitorInfo>("Flow", 1, 0, "NodeMonitorInfo","Only usable as flownode.");
@@ -47,28 +40,6 @@ FlowDslEngine::FlowDslEngine(QObject *parent) :
     qmlRegisterType<FlowRequestRouter>("Flow", 1, 0, "RequestRouter");
     qmlRegisterType<FlowInPort>("Flow", 1, 0, "InPort");
     qmlRegisterType<FlowOutPort>("Flow", 1, 0, "OutPort");
-
-
-
-
-    engine = new QQmlEngine(this);
-//    engine->rootContext()->setContextProperty(name,value);
 }
-
-void FlowDslEngine::loadUrl(const QString &url)
-{
-    QQmlComponent *rootComponent = new  QQmlComponent(engine);
-    rootComponent->loadUrl(QUrl(url));
-
-    if(rootComponent->status() != QQmlComponent::Ready)
-    {
-        qDebug() << "Not Ready!!!"  << rootComponent->errorString();
-    }
-    rootComponent->create();
-    if(rootComponent->isError())
-        qDebug() << rootComponent->errorString();
-}
-
-
 
 

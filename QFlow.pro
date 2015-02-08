@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS = FlowLib Test
+SUBDIRS = FlowLib QmlFlow Test
+
 

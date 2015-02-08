@@ -4,66 +4,98 @@ import App 1.0 as App
 
 Flow.Graph{
     name:"G"
-    Flow.TimerSourceNode{
+    Flow.Node{
         id: sourceNode
         debug:true
-        outputPort.next: n1.inputPort
-        onResponseReceived: console.log("N1 Response Received:" + port)
-
-        running: true
-        repeat: false
-        interval: 1000
-        property int seq:0
-        onTriggered: {
-            var newPacket = {"seq": seq, "data": "Start Content" }
-            sourceNode.sendRequestToPort(outputPort,newPacket)
-            seq ++
+        Flow.OutPort{
+            id: sourceOut1
+            next:n1InPort
         }
-        onRunningChanged: console.log("total:" + seq)
+        onResponseReceived: console.log("N1 Response Received:" + port)
+        Timer{
+            property int seq:0
+            running: true
+            repeat: false
+            interval: 1000
+            onTriggered: {
+                var newPacket = {"seq": seq, "data": "Start Content" }
+                sourceNode.sendRequestToPort(sourceOut1,newPacket)
+                seq ++
+            }
+            onRunningChanged: console.log("total:" + seq)
+        }
     }
 
-    Flow.InOutNode{
+    Flow.Node{
         id: n1
         name : "n1"
         debug: true
-        outputPort.next: n2.inputPort
+        Flow.InPort{
+            id: n1InPort
+        }
+
+        Flow.OutPort{
+            id: n1OutPort
+            next: n2InPort
+        }
+
         onRequestReceived: {
-            sendRequestToPort(outputPort,flowPacket)
+            sendRequestToPort(n1OutPort,flowPacket)
         }
         onResponseReceived: {
-            sendResponseToPort(inputPort,flowPacket)
+            sendResponseToPort(n1InPort,flowPacket)
         }
+
     }
 
-    Flow.InOutNode{
+    Flow.Node{
         id: n2
         name : "n2"
         debug: true
-        outputPort.next: n3.inputPort
+        Flow.InPort{
+            id: n2InPort
+        }
+
+        Flow.OutPort{
+            id: n2OutPort
+            next: n3InPort
+        }
+
         onRequestReceived: {
-            sendRequestToPort(outputPort,flowPacket)
+            sendRequestToPort(n2OutPort,flowPacket)
         }
         onResponseReceived: {
-            sendResponseToPort(inputPort,flowPacket)
+            sendResponseToPort(n2InPort,flowPacket)
         }
     }
 
-    Flow.InOutNode{
+    Flow.Node{
         id: n3
         name : "n3"
         debug: true
-        outputPort.next: sinkNode.inputPort
+        Flow.InPort{
+            id: n3InPort
+        }
+
+        Flow.OutPort{
+            id: n3OutPort
+            next: sinkInPort
+        }
         onRequestReceived: {
-            sendRequestToPort(outputPort,flowPacket)
+            sendRequestToPort(n3OutPort,flowPacket)
         }
         onResponseReceived: {
-            sendResponseToPort(inputPort,flowPacket)
+            sendResponseToPort(n3InPort,flowPacket)
         }
     }
 
-    Flow.SinkNode{
+    Flow.Node{
         id: sinkNode
         debug: true
+        Flow.InPort{
+            id:sinkInPort
+        }
+
         onRequestReceived: {
             console.log("N1 Request Received:" + port)
             sendResponseToPort(port,flowPacket)
