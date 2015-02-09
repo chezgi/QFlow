@@ -33,3 +33,8 @@ SOURCES += \
     FlowNodeServiceInfo.cpp \
     FlowRestService.cpp \
     FlowRestConnection.cpp
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
